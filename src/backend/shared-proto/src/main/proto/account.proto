@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.ordermatching.proto.account";
+option java_outer_classname = "AccountProto";
+
+package account;
+
+// ========================
+// Account Service
+// ========================
+
+service AccountService {
+  rpc ListAccounts (Empty) returns (AccountListResponse);
+  rpc CreateAccount (CreateAccountRequest) returns (AccountResponse);
+  rpc GetAccount (GetAccountRequest) returns (AccountResponse);
+  rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse);
+}
+
+message Empty {}
+
+message CreateAccountRequest {
+  string name = 1;
+  string role = 2; // "TRADER" or "ADMIN"
+}
+
+message GetAccountRequest {
+  string account_id = 1;
+}
+
+message AccountResponse {
+  string account_id = 1;
+  string name = 2;
+  string role = 3;
+  string status = 4;
+  double initial_balance = 5;
+}
+
+message AccountListResponse {
+  repeated AccountResponse accounts = 1;
+}
+
+message DeleteAccountRequest {
+  string account_id = 1;
+}
+
+message DeleteAccountResponse {
+  bool success = 1;
+}

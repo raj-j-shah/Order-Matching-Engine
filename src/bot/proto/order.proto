@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.ordermatching.proto.order";
+option java_outer_classname = "OrderProto";
+
+package order;
+
+// ========================
+// Order Management Service
+// ========================
+
+service OrderManagementService {
+  rpc PlaceOrder (PlaceOrderRequest) returns (OrderResponse);
+  rpc ModifyOrder (ModifyOrderRequest) returns (OrderResponse);
+  rpc CancelOrder (CancelOrderRequest) returns (CancelOrderResponse);
+  rpc GetOpenOrders (GetOpenOrdersRequest) returns (OrderListResponse);
+}
+
+message PlaceOrderRequest {
+  string account_id = 1;
+  string symbol_id = 2;
+  string side = 3;        // "BUY" or "SELL"
+  string order_type = 4;  // "LIMIT" or "MARKET"
+  double quantity = 5;
+  double price = 6;       // 0 for MARKET orders
+}
+
+message ModifyOrderRequest {
+  string order_id = 1;
+  string account_id = 2;
+  double new_quantity = 3;
+  double new_price = 4;
+}
+
+message CancelOrderRequest {
+  string order_id = 1;
+  string account_id = 2;
+}
+
+message GetOpenOrdersRequest {
+  string account_id = 1;
+  string symbol_id = 2; // optional filter
+}
+
+message OrderResponse {
+  string order_id = 1;
+  string account_id = 2;
+  string symbol_id = 3;
+  string side = 4;
+  string order_type = 5;
+  double quantity = 6;
+  double price = 7;
+  double average_price = 10;
+  string status = 8;
+  int64 created_at = 9;
+}
+
+message OrderListResponse {
+  repeated OrderResponse orders = 1;
+}
+
+message CancelOrderResponse {
+  bool success = 1;
+  string message = 2;
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ome-bot",
+  "version": "1.0.0",
+  "description": "Market maker bot",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.8",
+    "@grpc/proto-loader": "^0.7.13",
+    "kafkajs": "^2.2.4",
+    "uuid": "^9.0.1"
+  }
+}

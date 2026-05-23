@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.ordermatching.proto.market";
+option java_outer_classname = "MarketProto";
+
+package market;
+
+// ========================
+// Market Data Service
+// ========================
+
+service MarketDataService {
+  rpc GetActiveSymbols (EmptyRequest) returns (SymbolListResponse);
+  rpc GetSymbol (GetSymbolRequest) returns (SymbolResponse);
+  rpc AddSymbol (AddSymbolRequest) returns (SymbolResponse);
+  rpc DeleteSymbol (DeleteSymbolRequest) returns (DeleteSymbolResponse);
+  rpc GetRecentTrades (GetRecentTradesRequest) returns (RecentTradesResponse);
+}
+
+message EmptyRequest {}
+
+message GetSymbolRequest {
+  string symbol_id = 1;
+}
+
+message PriceSnapshot {
+  double last_price = 1;
+  double best_bid = 2;
+  double best_ask = 3;
+  double change_24h = 4;
+  double change_percent_24h = 5;
+}
+
+message SymbolResponse {
+  string symbol_id = 1;
+  string base_currency = 2;
+  string quote_currency = 3;
+  string status = 4;
+  PriceSnapshot price_snapshot = 5;
+}
+
+message SymbolListResponse {
+  repeated SymbolResponse symbols = 1;
+}
+
+message AddSymbolRequest {
+  string symbol_id = 1;
+  string base_currency = 2;
+  string quote_currency = 3;
+}
+
+message DeleteSymbolRequest {
+  string symbol_id = 1;
+}
+
+message DeleteSymbolResponse {
+  bool success = 1;
+}
+
+message GetRecentTradesRequest {
+  string symbol_id = 1;
+  int32 limit = 2;
+}
+
+message RecentTrade {
+  string trade_id = 1;
+  string price = 2;
+  string quantity = 3;
+  int64 timestamp = 4;
+  string side = 5;
+}
+
+message RecentTradesResponse {
+  repeated RecentTrade trades = 1;
+}

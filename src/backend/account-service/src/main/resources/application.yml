@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: account-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ome_db}
+    username: ${SPRING_DATASOURCE_USERNAME:ome_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:ome_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT:9001}
+
+logging:
+  level:
+    com.ordermatching: INFO
+    net.devh: WARN
