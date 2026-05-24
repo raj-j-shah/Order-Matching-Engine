@@ -1,6 +1,10 @@
 # ProTrade: Distributed Order Matching Engine
 ProTrade is a highly scalable, event-driven Order Matching Engine built with a microservices architecture. It supports real-time order book matching, portfolio management, and live market data broadcasting.
 The system is designed to handle high-throughput trading with eventual consistency for database persistence, utilizing gRPC for synchronous inter-service communication and Apache Kafka for asynchronous event streaming.
+
+## 📘 User Guide
+For a detailed walkthrough of the simulator's features, trading scenarios, and UI screenshots, please refer to our [User Guide](docs/user_guide.md).
+
 ## 🏗️ System Architecture
 The architecture separates the fast-path execution (in-memory matching) from the slow-path persistence (database writes).
 ```mermaid
