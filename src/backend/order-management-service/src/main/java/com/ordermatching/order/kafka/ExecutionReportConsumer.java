@@ -2,6 +2,7 @@ package com.ordermatching.order.kafka;
 
 import com.ordermatching.order.domain.Order;
 import com.ordermatching.order.domain.OrderStatus;
+import com.ordermatching.order.kafka.events.OrderCancelledByEngineEvent;
 import com.ordermatching.order.kafka.events.TradeExecutedEvent;
 import com.ordermatching.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +44,31 @@ public class ExecutionReportConsumer {
                 if (newFilled.compareTo(order.getQuantity()) >= 0) {
                     order.setStatus(OrderStatus.FILLED);
                 } else {
-                    order.setStatus(OrderStatus.PARTIAL_FILLED);
+                    if (order.getStatus() != OrderStatus.CANCELLED) {
+                        order.setStatus(OrderStatus.PARTIAL_FILLED);
+                    }
                 }
                 orderRepository.save(order);
                 log.info("Order {} updated: filled={} status={}", orderId, newFilled, order.getStatus());
             });
         } catch (IllegalArgumentException e) {
             log.warn("Invalid order ID in execution report: {}", orderIdStr);
+        }
+    }
+
+    @KafkaListener(topics = "orders.canceled_by_engine", groupId = "order-management-service")
+    @Transactional
+    public void handleEngineCancel(OrderCancelledByEngineEvent event) {
+        log.debug("Processing engine cancellation for order {}", event.getOrderId());
+        try {
+            UUID orderId = UUID.fromString(event.getOrderId());
+            orderRepository.findById(orderId).ifPresent(order -> {
+                order.setStatus(OrderStatus.CANCELLED);
+                orderRepository.save(order);
+                log.info("Order {} remainder cancelled by engine. Reason: {}", orderId, event.getReason());
+            });
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid order ID in engine cancel event: {}", event.getOrderId());
         }
     }
 }

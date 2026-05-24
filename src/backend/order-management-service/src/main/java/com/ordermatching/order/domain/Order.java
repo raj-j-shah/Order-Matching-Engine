@@ -57,6 +57,10 @@ public class Order {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();

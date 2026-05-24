@@ -29,6 +29,28 @@ public class OrderEventConsumer {
 
         List<TradeExecutedEvent> trades = book.matchOrder(event);
 
+        // Calculate how much was executed in these trades for the taker
+        java.math.BigDecimal executedQuantity = trades.stream()
+                .filter(t -> t.getTakerOrderId().equals(event.getOrderId()))
+                .map(TradeExecutedEvent::getQuantity)
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+
+        java.math.BigDecimal remainingQty = event.getQuantity().subtract(executedQuantity);
+
+        // If it's a MARKET order and there is remaining quantity, it's discarded by the book.
+        // We must notify OMS to cancel the remainder.
+        if ("MARKET".equalsIgnoreCase(event.getOrderType()) && remainingQty.compareTo(java.math.BigDecimal.ZERO) > 0) {
+            OrderCancelledByEngineEvent cancelEvent = new OrderCancelledByEngineEvent(
+                    event.getOrderId(),
+                    event.getSymbolId(),
+                    remainingQty,
+                    "IOC_MARKET_REMAINDER",
+                    System.currentTimeMillis()
+            );
+            kafkaTemplate.send("orders.canceled_by_engine", event.getSymbolId(), cancelEvent);
+            log.info("Market order {} partially filled. Remaining {} cancelled by engine.", event.getOrderId(), remainingQty);
+        }
+
         // Publish each trade
         trades.forEach(trade -> {
             kafkaTemplate.send("trades.executed", trade.getSymbolId(), trade);

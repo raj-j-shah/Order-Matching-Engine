@@ -28,6 +28,19 @@ export function Layout() {
     if (!isAdmin && currentPath === '/admin') navigate('/');
   }, [isAdmin, activeAccount, currentPath, navigate]);
 
+  useEffect(() => {
+    let activeLabel = 'Order Matching Engine';
+    if (isAdmin && currentPath === '/admin') activeLabel = 'Admin Panel';
+    else if (!isAdmin) {
+      if (currentPath === '/') activeLabel = 'Trading';
+      else if (currentPath === '/orders') activeLabel = 'My Orders';
+      else if (currentPath === '/history') activeLabel = 'Trade History';
+      else if (currentPath === '/portfolio') activeLabel = 'Portfolio';
+    }
+    
+    document.title = `OME - ${activeLabel}`;
+  }, [currentPath, isAdmin]);
+
   return (
     <div className="app-container">
       {/* ── Navbar ── */}

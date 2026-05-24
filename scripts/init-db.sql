@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS orders (
     filled_quantity DECIMAL(20, 8) NOT NULL DEFAULT 0,
     status VARCHAR(20) NOT NULL DEFAULT 'OPEN',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    version BIGINT DEFAULT 0
 );
 
 -- Balances Table
